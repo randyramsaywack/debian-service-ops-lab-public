@@ -1,0 +1,21 @@
+---
+- name: Ensure sudo package is installed
+  ansible.builtin.apt:
+    name: sudo
+    state: present
+
+- name: Ensure lab admin user is in sudo group
+  ansible.builtin.user:
+    name: "{{ lab_admin_user }}"
+    groups: "{{ lab_admin_group }}"
+    append: true
+
+- name: Manage sudoers drop-in for lab admin user
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/90-{{ lab_admin_user }}"
+    owner: root
+    group: root
+    mode: "0440"
+    validate: /usr/sbin/visudo -cf %s
+    content: |
+      {{ lab_admin_user }} ALL=(ALL:ALL) {% if lab_admin_sudo_nopasswd %}NOPASSWD:{% endif %} ALL

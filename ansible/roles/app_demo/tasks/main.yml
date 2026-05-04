@@ -1,0 +1,91 @@
+---
+- name: Ensure Python app dependencies are installed
+  ansible.builtin.apt:
+    name:
+      - python3-venv
+    state: present
+    update_cache: true
+
+- name: Ensure app group exists
+  ansible.builtin.group:
+    name: "{{ app_demo_group }}"
+    state: present
+
+- name: Ensure app user exists
+  ansible.builtin.user:
+    name: "{{ app_demo_user }}"
+    group: "{{ app_demo_group }}"
+    system: true
+    create_home: false
+    shell: /usr/sbin/nologin
+
+- name: Ensure app directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ app_demo_user }}"
+    group: "{{ app_demo_group }}"
+    mode: "0755"
+  loop:
+    - "{{ app_demo_root }}"
+    - "{{ app_demo_source_path }}"
+
+- name: Install FastAPI application
+  ansible.builtin.template:
+    src: main.py.j2
+    dest: "{{ app_demo_source_path }}/main.py"
+    owner: "{{ app_demo_user }}"
+    group: "{{ app_demo_group }}"
+    mode: "0644"
+  notify: Restart app demo service
+
+- name: Install app environment file
+  ansible.builtin.template:
+    src: ops-lab-api.env.j2
+    dest: "/etc/{{ app_demo_service_name }}.env"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart app demo service
+
+- name: Install app systemd unit
+  ansible.builtin.template:
+    src: ops-lab-api.service.j2
+    dest: "/etc/systemd/system/{{ app_demo_service_name }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart app demo service
+
+- name: Install Python packages into app virtualenv
+  ansible.builtin.pip:
+    name:
+      - fastapi
+      - uvicorn[standard]
+    state: present
+    virtualenv: "{{ app_demo_venv_path }}"
+    virtualenv_command: /usr/bin/python3 -m venv
+  notify: Restart app demo service
+
+- name: Ensure app service is enabled and started
+  ansible.builtin.systemd:
+    name: "{{ app_demo_service_name }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Flush app handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Wait for app API port
+  ansible.builtin.wait_for:
+    host: "{{ app_demo_bind_host }}"
+    port: "{{ app_demo_bind_port }}"
+    delay: 1
+    timeout: 30
+
+- name: Verify app health endpoint locally
+  ansible.builtin.uri:
+    url: "http://{{ app_demo_bind_host }}:{{ app_demo_bind_port }}/api/healthz"
+    status_code: 200
+    return_content: true

@@ -1,0 +1,11 @@
+---
+firewall_allowed_tcp_ports:
+  - 22
+  - 80
+
+nginx_demo_server_name: ops-dev
+nginx_demo_document_title: ops-dev FastAPI demo
+nginx_demo_body_heading: Debian Service Operations Lab
+nginx_demo_body_text: ops-dev is serving a static frontend through nginx and a FastAPI backend through /api.
+nginx_demo_health_path: /healthz
+app_demo_message: Hello from the Debian Service Operations Lab API.

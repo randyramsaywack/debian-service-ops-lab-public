@@ -1,0 +1,4 @@
+---
+lab_admin_user: debian
+lab_admin_group: sudo
+lab_admin_sudo_nopasswd: true

@@ -1,0 +1,8 @@
+---
+fail2ban_sshd_enabled: true
+fail2ban_sshd_port: ssh
+fail2ban_sshd_backend: systemd
+fail2ban_sshd_maxretry: 5
+fail2ban_sshd_findtime: 10m
+fail2ban_sshd_bantime: 1h
+banaction: ufw

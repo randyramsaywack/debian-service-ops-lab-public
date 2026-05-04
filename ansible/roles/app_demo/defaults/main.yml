@@ -1,0 +1,10 @@
+---
+app_demo_user: opslab
+app_demo_group: opslab
+app_demo_root: /opt/ops-lab-app
+app_demo_source_path: "{{ app_demo_root }}/current"
+app_demo_venv_path: "{{ app_demo_root }}/venv"
+app_demo_service_name: ops-lab-api
+app_demo_bind_host: 127.0.0.1
+app_demo_bind_port: 8000
+app_demo_message: Hello from the Debian Service Operations Lab API.

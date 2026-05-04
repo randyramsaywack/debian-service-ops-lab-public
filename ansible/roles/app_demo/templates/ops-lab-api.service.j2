@@ -1,0 +1,17 @@
+[Unit]
+Description=Ops Lab FastAPI backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ app_demo_user }}
+Group={{ app_demo_group }}
+WorkingDirectory={{ app_demo_source_path }}
+EnvironmentFile=/etc/{{ app_demo_service_name }}.env
+ExecStart={{ app_demo_venv_path }}/bin/uvicorn main:app --host ${OPS_LAB_BIND_HOST} --port ${OPS_LAB_BIND_PORT}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

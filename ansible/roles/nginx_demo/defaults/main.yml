@@ -1,0 +1,7 @@
+---
+nginx_demo_server_name: "_"
+nginx_demo_document_root: /var/www/ops-lab
+nginx_demo_document_title: Debian Service Operations Lab
+nginx_demo_body_heading: Debian Service Operations Lab
+nginx_demo_body_text: This host is serving an Ansible-managed nginx smoke page.
+nginx_demo_health_path: /healthz

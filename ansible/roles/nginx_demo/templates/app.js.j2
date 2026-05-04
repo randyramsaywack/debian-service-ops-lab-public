@@ -1,0 +1,36 @@
+async function fetchJson(path) {
+  const response = await fetch(path);
+
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+async function loadHealth() {
+  const target = document.getElementById("api-status");
+
+  try {
+    const data = await fetchJson("/api/healthz");
+    target.textContent = `API status: ${data.status}`;
+    target.dataset.state = "ok";
+  } catch (error) {
+    target.textContent = `API status: error (${error.message})`;
+    target.dataset.state = "error";
+  }
+}
+
+async function loadMessage() {
+  const target = document.getElementById("api-message");
+
+  try {
+    const data = await fetchJson("/api/message");
+    target.textContent = data.message;
+  } catch (error) {
+    target.textContent = `Failed to load message: ${error.message}`;
+  }
+}
+
+document.getElementById("load-message").addEventListener("click", loadMessage);
+loadHealth();

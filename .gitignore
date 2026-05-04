@@ -1,0 +1,9 @@
+.DS_Store
+*.retry
+*.log
+
+# Local inventory or secrets should stay out of git unless intentionally sanitized.
+*.vault
+*.key
+*.pem
+.env

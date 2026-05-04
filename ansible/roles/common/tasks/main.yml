@@ -1,0 +1,28 @@
+---
+- name: Refresh apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install baseline packages
+  ansible.builtin.apt:
+    name: "{{ baseline_packages }}"
+    state: present
+
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ lab_timezone }}"
+
+- name: Ensure qemu guest agent is enabled and running
+  ansible.builtin.service:
+    name: qemu-guest-agent
+    enabled: true
+    state: started
+
+- name: Optionally manage /etc/hosts with gathered hostname
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: '^127\\.0\\.1\\.1\\s+'
+    line: "127.0.1.1 {{ ansible_hostname }}"
+    state: present
+  when: baseline_manage_hosts_file

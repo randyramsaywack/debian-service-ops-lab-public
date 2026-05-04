@@ -1,0 +1,16 @@
+---
+- name: Apply Debian baseline
+  hosts: debian_lab
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Assert supported operating system
+      ansible.builtin.assert:
+        that:
+          - ansible_distribution == "Debian"
+          - ansible_distribution_major_version | int == 12
+        fail_msg: "This baseline currently targets Debian 12 only."
+
+  roles:
+    - common

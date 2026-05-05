@@ -5,7 +5,7 @@ Local helper scripts will live here.
 Available scripts:
 
 - `new-debian-vm.sh`: clone a Debian VM from the Proxmox cloud-init template, resize the disk to a final size, apply common cloud-init settings, and optionally start it
-- `validate-host.sh`: run a lightweight remote validation against a Debian host and print a pass/fail summary for SSH, sudo, system state, UFW, `fail2ban`, `qemu-guest-agent`, reboot requirement, and optional HTTP endpoints
+- `validate-host.sh`: run a lightweight remote validation against a Debian host and print a pass/fail summary for SSH, sudo, system state, UFW, `fail2ban`, `qemu-guest-agent`, reboot requirement, and optional systemd units and HTTP endpoints
 - `patch-report.sh`: collect a live patching/validation snapshot from a host and write it to a markdown report under `docs/reports/`
 
 Planned next scripts:
@@ -102,6 +102,7 @@ Current checks:
 - UFW is active and still allows `22/tcp`
 - `fail2ban` exposes the `sshd` jail
 - no reboot is pending
+- optional repeated systemd unit checks when you pass one or more `--service` flags
 - optional repeated HTTP endpoint checks when you pass one or more `--http-url` flags
 
 Example:
@@ -110,6 +111,7 @@ Example:
 ./scripts/validate-host.sh debian@10.0.0.10
 ./scripts/validate-host.sh debian@10.0.0.10 --http-url http://10.0.0.10/healthz
 ./scripts/validate-host.sh debian@10.0.0.10 --http-url http://10.0.0.10/healthz --http-url http://10.0.0.10/api/healthz
+./scripts/validate-host.sh debian@10.0.0.10 --service nginx --service postgresql
 ```
 
 ## `patch-report.sh`

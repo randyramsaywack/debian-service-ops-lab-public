@@ -10,6 +10,6 @@ Report examples:
 - Staging patch report
 - Production patch report
 - Validation report
-- Restore drill report
+- Restore drill report (template at `templates/backup-restore-drill.md`)
 - Alert test evidence
 - Capstone upgrade report

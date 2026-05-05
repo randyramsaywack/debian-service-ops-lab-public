@@ -10,6 +10,6 @@ Planned runbooks:
 - Hardening baseline: `hardening-baseline.md`
 - Staged patching: `staged-patching.md`
 - Post-upgrade validation
-- Backup and restore drill
+- Backup and restore drill: `backup-restore-drill.md`
 - Incident/change log process
 - Capstone Nginx/app/Postgres upgrade

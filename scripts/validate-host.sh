@@ -5,14 +5,15 @@ set -u
 usage() {
   cat <<'EOF'
 Usage:
-  ./scripts/validate-host.sh <host> [--http-url <url>]...
-  ./scripts/validate-host.sh <user@host> [--http-url <url>]...
+  ./scripts/validate-host.sh <host> [--http-url <url>]... [--service <unit>]...
+  ./scripts/validate-host.sh <user@host> [--http-url <url>]... [--service <unit>]...
 
 Examples:
   ./scripts/validate-host.sh 10.0.0.10
   ./scripts/validate-host.sh debian@ops-dev
   ./scripts/validate-host.sh debian@10.0.0.10 --http-url http://10.0.0.10/healthz
   ./scripts/validate-host.sh debian@10.0.0.10 --http-url http://10.0.0.10/healthz --http-url http://10.0.0.10/api/healthz
+  ./scripts/validate-host.sh debian@10.0.0.10 --service nginx --service postgresql
 EOF
 }
 
@@ -30,6 +31,7 @@ target="$1"
 shift
 
 http_urls=()
+services=()
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -39,6 +41,14 @@ while [ "$#" -gt 0 ]; do
         exit 1
       fi
       http_urls+=("$2")
+      shift 2
+      ;;
+    --service)
+      if [ "${2:-}" = "" ]; then
+        printf 'Missing value for --service\n' >&2
+        exit 1
+      fi
+      services+=("$2")
       shift 2
       ;;
     *)
@@ -106,6 +116,10 @@ check_command "ufw is active" "sudo ufw status | grep -q '^Status: active\$'"
 check_command "ufw allows SSH on tcp/22" "sudo ufw status | grep -Eq '(^| )22/tcp[[:space:]]+ALLOW'"
 check_command "fail2ban sshd jail is available" "sudo fail2ban-client status sshd >/dev/null"
 check_command "reboot is not required" "[ ! -f /var/run/reboot-required ]"
+
+for service in "${services[@]}"; do
+  check_command "systemd unit is active: $service" "systemctl is-active --quiet '$service'"
+done
 
 for http_url in "${http_urls[@]}"; do
   check_command "HTTP endpoint returns success: $http_url" "curl -fsS --max-time 5 '$http_url' >/dev/null"

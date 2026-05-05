@@ -7,3 +7,6 @@
 *.key
 *.pem
 .env
+
+# Local CodeMachine harness state (logs, memory, prompts, agent inputs).
+.codemachine/

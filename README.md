@@ -14,6 +14,7 @@ Public repo note:
 
 If you are picking up this repo as a collaborator or agent, start with:
 
+- `AGENTS.md` for the public-safe agent handoff, guardrails, and recommended next tasks
 - `docs/architecture.md` for the target lab design and maintenance workflow
 - `docs/inventory.md` for the current lab host plan
 
